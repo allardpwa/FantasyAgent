@@ -1,0 +1,38 @@
+{
+  "_comment": "Guardrails the agent must obey. Edit freely - it reads this every run.",
+
+  "dry_run": true,
+
+  "team": {
+    "league_key": null,
+    "team_key": null
+  },
+
+  "lineup": {
+    "auto_set": true,
+    "bench_players_on_bye": true,
+    "never_start_status": ["O", "IR", "SUSP", "PUP", "NA", "D"],
+    "avoid_start_status": ["D", "Q"],
+    "lock_starters": []
+  },
+
+  "waivers": {
+    "auto_claim": true,
+    "max_claims_per_week": 2,
+    "max_faab_bid_pct": 25,
+    "min_faab_reserve": 10,
+    "min_projected_gain": 2.0,
+    "never_drop": [],
+    "never_drop_top_n_by_projection": 6,
+    "min_roster_at_position": { "QB": 1, "RB": 4, "WR": 4, "TE": 1, "K": 1, "DEF": 1 }
+  },
+
+  "trades": {
+    "auto_propose": false,
+    "auto_accept": false
+  },
+
+  "notify": {
+    "write_report_to": "data/last-run.md"
+  }
+}

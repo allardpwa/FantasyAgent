@@ -1,0 +1,14 @@
+{
+  "name": "fantasy-agent",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "description": "Agentic manager for a Yahoo Fantasy Football team",
+  "bin": { "ff": "./src/cli.js" },
+  "scripts": {
+    "ff": "node src/cli.js",
+    "login": "node src/cli.js login",
+    "brief": "node src/cli.js brief"
+  },
+  "engines": { "node": ">=20" }
+}
