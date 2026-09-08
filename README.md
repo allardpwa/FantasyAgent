@@ -6,6 +6,24 @@ only, using built-in `fetch`.
 
 ## Setup (once)
 
+### 0. Apply for API access first (as of Sept 2026)
+
+Yahoo has moved Fantasy Sports API access behind a review process at
+<https://sports.yahoo.com/developer/access/>. The Fantasy Sports permission no
+longer appears on the generic YDN app-creation form, and Yahoo states:
+
+> The Yahoo Fantasy Sports API currently provides read access only. Write
+> access is not available at this time.
+
+The application form has a notes field inviting read/write requests for unique
+use cases. **Ask for read/write there** and describe the personal, single-league
+scope — write access is what lets this agent actually set your lineup.
+
+Until write access is granted, everything read-side works (brief, roster, free
+agents, lineup *preview*, projections, reports) and `--apply` will fail at the
+API. The write code in `src/yahoo.js` follows Yahoo's documented XML formats and
+is ready for the day access is approved.
+
 ### 1. Create a Yahoo app
 
 Go to <https://developer.yahoo.com/apps/create/>:

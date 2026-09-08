@@ -14,6 +14,16 @@ dependencies**. Keep it that way unless there's a strong reason.
 - **Never commit `state/tokens.json`, `.env`, or the client secret.**
 - Trades are owner-only by design.
 
+## Known external constraint (verified 2026-09-07)
+
+Yahoo gates Fantasy Sports API access behind review at
+sports.yahoo.com/developer/access/ and currently grants **read-only**. The
+`setLineup` / `addDrop` write paths are implemented to Yahoo's documented XML
+formats but will fail until write access is approved for the app. Do not
+"fix" this by rewriting the write layer - it is an authorisation limit, not a
+bug. Advisory mode (research + preview + report) is the working configuration
+in the meantime.
+
 ## Working on the code
 
 - `node test/lineup.test.mjs` must pass after touching `src/lineup.js`.
