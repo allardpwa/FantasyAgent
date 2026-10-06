@@ -6,34 +6,38 @@ only, using built-in `fetch`.
 
 ## Setup (once)
 
-### 0. Apply for API access first (as of Sept 2026)
+### 0. API access is read-only (confirmed Oct 2026)
 
-Yahoo has moved Fantasy Sports API access behind a review process at
-<https://sports.yahoo.com/developer/access/>. The Fantasy Sports permission no
-longer appears on the generic YDN app-creation form, and Yahoo states:
+Yahoo gates Fantasy Sports API access behind a review process at
+<https://sports.yahoo.com/developer/access/>. Access was granted for this
+project in October 2026, and the app-creation form offers **Read only** — there
+is no Read/Write option. Yahoo's own page states it plainly:
 
 > The Yahoo Fantasy Sports API currently provides read access only. Write
 > access is not available at this time.
 
-The application form has a notes field inviting read/write requests for unique
-use cases. **Ask for read/write there** and describe the personal, single-league
-scope — write access is what lets this agent actually set your lineup.
+**So this agent is advisory.** It reads the league, researches projections, and
+produces the exact moves to make; you enter them in the Yahoo app. That takes
+about two minutes a week.
 
-Until write access is granted, everything read-side works (brief, roster, free
-agents, lineup *preview*, projections, reports) and `--apply` will fail at the
-API. The write code in `src/yahoo.js` follows Yahoo's documented XML formats and
-is ready for the day access is approved.
+`setLineup` and `addDrop` in `src/yahoo.js` are implemented to Yahoo's
+documented XML formats and left in place for the day write access appears. They
+are dormant, not broken — `dry_run: true` in `config/rules.json` keeps them
+unreachable. Do not try to route around this; there is no sanctioned write path.
 
 ### 1. Create a Yahoo app
 
-Go to <https://developer.yahoo.com/apps/create/>:
+Create a **new** app at <https://developer.yahoo.com/apps/> — editing an
+existing app does not pick up Fantasy Sports access. After creating it, submit
+the Client ID at <https://sports.yahoo.com/developer/application-confirmation/>
+so Yahoo enables it.
 
 - **Application Type**: Web Application
 - **Redirect URI**: `https://localhost:8080/callback` — the page does not have
   to exist. Yahoo requires an `https` URI; you copy the `?code=` out of the
   address bar after it fails to load.
-- **API Permissions**: tick **Fantasy Sports**, and choose **Read/Write**
-  (read-only will not let the agent set your lineup)
+- **API Permissions**: tick **Fantasy Sports**. Only **Read** is offered; there
+  is no Read/Write option (see section 0)
 
 Copy the Client ID and Client Secret.
 

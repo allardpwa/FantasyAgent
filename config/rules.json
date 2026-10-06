@@ -1,5 +1,6 @@
 {
   "_comment": "Guardrails the agent must obey. Edit freely - it reads this every run.",
+  "_dry_run_note": "Keep dry_run true: Yahoo grants read-only API access, so writes cannot succeed. The agent is advisory - it recommends moves you enter in the Yahoo app.",
 
   "dry_run": true,
 

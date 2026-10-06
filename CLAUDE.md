@@ -14,15 +14,20 @@ dependencies**. Keep it that way unless there's a strong reason.
 - **Never commit `state/tokens.json`, `.env`, or the client secret.**
 - Trades are owner-only by design.
 
-## Known external constraint (verified 2026-09-07)
+## Known external constraint (confirmed 2026-10-05)
 
-Yahoo gates Fantasy Sports API access behind review at
-sports.yahoo.com/developer/access/ and currently grants **read-only**. The
-`setLineup` / `addDrop` write paths are implemented to Yahoo's documented XML
-formats but will fail until write access is approved for the app. Do not
-"fix" this by rewriting the write layer - it is an authorisation limit, not a
-bug. Advisory mode (research + preview + report) is the working configuration
-in the meantime.
+Yahoo grants this app **read-only** Fantasy Sports API access. The
+app-creation form offers no Read/Write option, and Yahoo states write access is
+not available on the platform. This is an authorisation limit, not a bug.
+
+**The agent is therefore advisory**: research projections, compute the optimal
+lineup and waiver targets, report them for the owner to enter manually.
+
+- Never pass `--apply`; it cannot succeed. `dry_run: true` blocks it anyway.
+- Do not "fix" this by rewriting the write layer, scraping, or driving the
+  Yahoo web UI. `setLineup` / `addDrop` stay as-is for the day write access
+  appears.
+- Report recommendations as recommendations. Never imply a move was made.
 
 ## Working on the code
 

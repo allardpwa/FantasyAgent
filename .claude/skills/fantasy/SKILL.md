@@ -57,12 +57,14 @@ Run on the season points-per-game fallback and flag it prominently.
 ### 3. Set the lineup
 
 ```sh
-node src/cli.js lineup            # preview
-node src/cli.js lineup --apply    # write it to Yahoo
+node src/cli.js lineup            # the optimal lineup and the diff
 ```
 
+Never pass `--apply` — Yahoo grants read-only access, so it cannot succeed.
+Report the changes for the owner to enter in the Yahoo app.
+
 The optimizer handles slot eligibility, flex, byes and OUT designations. Sanity
-check its output before applying — if it wants to bench a stud, work out why
+check its output before recommending it — if it wants to bench a stud, work out why
 (often a stale or missing projection) rather than overriding blindly. To force a
 player into the lineup, add their name to `lineup.lock_starters` **only if the
 owner asked for that**.
@@ -71,7 +73,7 @@ owner asked for that**.
 
 ```sh
 node src/cli.js fa --pos RB --count 30
-node src/cli.js claim --add KEY --drop KEY --faab 12 --gain 3.5 --balance 100 --apply
+node src/cli.js claim --add KEY --drop KEY --faab 12 --gain 3.5 --balance 100
 ```
 
 Before claiming, be able to answer:
