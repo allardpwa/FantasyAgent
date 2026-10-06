@@ -55,6 +55,19 @@ async function login() {
     console.log('Already authenticated. Re-run with --force to redo the login.');
     return;
   }
+  // Non-interactive paths, so login works from a session with no TTY:
+  // --url prints the authorize URL, --code finishes the exchange.
+  if (has('url')) {
+    console.log(authorizeUrl());
+    return;
+  }
+  const supplied = flag('code');
+  if (typeof supplied === 'string') {
+    await exchangeCode(supplied);
+    console.log('Authenticated. Tokens saved to state/tokens.json (gitignored).');
+    return;
+  }
+
   console.log('\n1. Open this URL in your browser and approve access:\n');
   console.log('   ' + authorizeUrl() + '\n');
   console.log('2. Yahoo redirects you to your redirect URI. That page may well fail');
@@ -269,7 +282,7 @@ const usage = [
   '',
   'fantasy-agent - agentic manager for a Yahoo Fantasy Football team',
   '',
-  '  node src/cli.js login                          one-time Yahoo OAuth',
+  '  node src/cli.js login [--url | --code URL]  one-time Yahoo OAuth',
   '  node src/cli.js whoami [--save] [--pick N]     list your teams, store one',
   '  node src/cli.js brief [--week N]               full snapshot -> data/brief.json',
   '  node src/cli.js roster [--week N]              roster table',
