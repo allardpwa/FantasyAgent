@@ -302,5 +302,6 @@ try {
   await fn();
 } catch (e) {
   console.error('\nError: ' + e.message);
-  process.exit(1);
+  // process.exit() with in-flight handles trips a libuv assert on Windows.
+  process.exitCode = 1;
 }
