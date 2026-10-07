@@ -142,6 +142,11 @@ async function brief() {
       scoring_type: deepGet(lg, 'scoring_type'),
       num_teams: deepGet(lg, 'num_teams'),
       roster_positions: deepGet(lg, 'roster_positions') ?? [],
+      // Waiver format decides how claims are priced. uses_faab '0' means
+      // priority-order waivers, where the FAAB guardrails do not apply.
+      uses_faab: deepGet(lg, 'uses_faab') ?? null,
+      waiver_type: deepGet(lg, 'waiver_type') ?? null,
+      waiver_rule: deepGet(lg, 'waiver_rule') ?? null,
     },
     team: {
       key: tk,
@@ -164,8 +169,11 @@ async function brief() {
   const file = save('brief.json', out);
   console.log('Week ' + week + ' - ' + out.league.name + ' - ' + out.team.name);
   console.log('Projections: ' + out.projections.source);
-  console.log('Roster: ' + players.length + ' players | FAAB: ' + faabBalance +
-              ' | Free agents sampled: ' + freeAgents.length);
+  const faabLeague = String(out.league.uses_faab) === '1';
+  console.log('Roster: ' + players.length + ' players | Free agents sampled: ' + freeAgents.length);
+  console.log('Waivers: ' + (faabLeague
+    ? 'FAAB, balance ' + faabBalance
+    : 'priority order, you are #' + (out.team.waiver_priority ?? '?') + ' (no FAAB in this league)'));
   console.log('\nFull snapshot -> ' + file);
   if (!source) {
     console.log('\nNOTE: no researched projections for this week. Lineup advice stays weak');
@@ -207,11 +215,21 @@ async function lineup() {
     console.log('\nAlready optimal - no changes needed.');
     return;
   }
-  console.log('\nChanges:');
-  for (const c of plan.changes) console.log('  ' + pad(c.name, 24) + c.from + ' -> ' + c.to);
+  const real = plan.changes.filter((c) => !c.reslot);
+  const reslots = plan.changes.filter((c) => c.reslot);
+  if (real.length) {
+    console.log('\nStart/sit changes:');
+    for (const c of real) console.log('  ' + pad(c.name, 24) + c.from + ' -> ' + c.to + '  (' + fmt(c.projected) + ')');
+  } else {
+    console.log('\nNo start/sit changes - the right players are already starting.');
+  }
+  if (reslots.length) {
+    console.log('\nSlot relabels only (same players start, no action needed):');
+    for (const c of reslots) console.log('  ' + pad(c.name, 24) + c.from + ' -> ' + c.to);
+  }
 
   if (!has('apply')) {
-    console.log('\n(preview only - pass --apply to write it to Yahoo)');
+    console.log('\nEnter these in the Yahoo app - the API is read-only, so this cannot be applied for you.');
     return;
   }
   const gate = checkAllowed(r, 'lineup');

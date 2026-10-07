@@ -76,6 +76,12 @@ node src/cli.js fa --pos RB --count 30
 node src/cli.js claim --add KEY --drop KEY --faab 12 --gain 3.5 --balance 100
 ```
 
+**Check the waiver format first.** `brief` reports it. In a FAAB league you bid;
+in a priority league (`uses_faab: "0"`) there is no bidding - claiming spends
+your priority position, which then resets to last. So in a priority league the
+question is not "what should I bid" but "is this add worth burning my spot",
+and the bar should be higher for a marginal upgrade.
+
 Before claiming, be able to answer:
 
 - Who does this add actually beat in the lineup, and by how many points? That

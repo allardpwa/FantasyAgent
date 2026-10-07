@@ -12,6 +12,17 @@ const BASE = 'https://fantasysports.yahooapis.com/fantasy/v2';
 export function simplify(node) {
   if (Array.isArray(node)) {
     const parts = node.map(simplify).filter((p) => p !== null && p !== undefined);
+    // A genuine list: every element is a single-key object sharing the same
+    // key, which is how Yahoo wraps list items (e.g. roster_positions ->
+    // [{roster_position:{...}}, ...]). Merging those collapses the whole list
+    // into its last element, so detect and unwrap instead.
+    if (parts.length > 1 &&
+        parts.every((p) => p && typeof p === 'object' && !Array.isArray(p) &&
+                           Object.keys(p).length === 1)) {
+      const k = Object.keys(parts[0])[0];
+      if (parts.every((p) => Object.keys(p)[0] === k)) return parts.map((p) => p[k]);
+    }
+
     const merged = {};
     let list = null;
     for (const p of parts) {
@@ -27,7 +38,10 @@ export function simplify(node) {
     const keys = Object.keys(node);
     const numeric = keys.filter((k) => /^\d+$/.test(k));
 
-    if ('count' in node && numeric.length === 0) return [];
+    // {count: 0} is an empty collection. Require count to be the ONLY key:
+    // real entities carry their own count field (roster_position.count is the
+    // number of slots), and treating those as empty collections ate them.
+    if (keys.length === 1 && keys[0] === 'count') return [];
 
     if (numeric.length && ('count' in node || numeric.length === keys.length)) {
       return numeric
@@ -105,7 +119,7 @@ export const teamInfo      = (tk)       => get(`/team/${tk};out=matchups,stats`)
 
 /** Roster for a week, with each player's stats and eligible positions. */
 export const roster = (tk, week) =>
-  get(`/team/${tk}/roster${week ? `;week=${week}` : ''}/players;out=stats,ownership,percent_owned`);
+  get(`/team/${tk}/roster${week ? `;week=${week}` : ''}/players/stats;type=season`);
 
 /**
  * Available players. status: FA | W (waivers) | A (all available) | T (taken)

@@ -129,7 +129,15 @@ export function optimize(players, rosterPositions, { week, rules = {} } = {}) {
   const changes = assignments
     .map((a) => ({ a, p: players.find((x) => x.key === a.player_key) }))
     .filter(({ a, p }) => p && p.current && p.current !== a.position)
-    .map(({ a, p }) => ({ name: a.name, from: p.current, to: a.position, projected: a.projected }));
+    .map(({ a, p }) => ({
+      name: a.name,
+      from: p.current,
+      to: a.position,
+      projected: a.projected,
+      // Moving between two starting slots does not change who plays, so it is
+      // bookkeeping rather than a decision the owner needs to act on.
+      reslot: !NON_STARTING.has(p.current) && !NON_STARTING.has(a.position),
+    }));
 
   const projectedTotal = assignments
     .filter((a) => !NON_STARTING.has(a.position))
